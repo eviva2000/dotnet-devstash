@@ -1,0 +1,11 @@
+@DevStash.Api_HostAddress = https://localhost:7097
+
+GET {{DevStash.Api_HostAddress}}/api
+Accept: application/json
+
+###
+
+GET {{DevStash.Api_HostAddress}}/health
+Accept: text/plain
+
+###

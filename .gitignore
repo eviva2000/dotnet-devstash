@@ -1,0 +1,25 @@
+# .NET
+**/bin/
+**/obj/
+*.user
+*.suo
+.vs/
+
+# JavaScript
+**/node_modules/
+**/dist/
+
+# Local configuration
+.env
+.env.*
+!.env.example
+appsettings.Local.json
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+
+# Test output
+TestResults/
+coverage/
