@@ -1,0 +1,7 @@
+interface:
+  display_name: "Feature Workflow"
+  short_description: "Load, build, test, and complete features"
+  default_prompt: "Use $feature to load, start, test, or complete the current DevStash feature."
+
+policy:
+  allow_implicit_invocation: false
