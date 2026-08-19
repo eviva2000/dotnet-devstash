@@ -3,6 +3,7 @@ using System;
 using DevStash.Api.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DevStash.Api.Data.Migrations
 {
     [DbContext(typeof(DevStashDbContext))]
-    partial class DevStashDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260819133230_AddAuthenticationUserFields")]
+    partial class AddAuthenticationUserFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

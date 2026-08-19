@@ -119,6 +119,18 @@ public sealed class DatabaseModelTests
     }
 
     [Fact]
+    public void ApplicationUsers_RequireBoundedDisplayNamesAndUniqueNormalizedEmails()
+    {
+        var user = EntityType<ApplicationUser>();
+        var displayName = user.FindProperty(nameof(ApplicationUser.DisplayName));
+
+        Assert.NotNull(displayName);
+        Assert.False(displayName.IsNullable);
+        Assert.Equal(ApplicationUser.DisplayNameMaxLength, displayName.GetMaxLength());
+        AssertUniqueIndex<ApplicationUser>(nameof(ApplicationUser.NormalizedEmail));
+    }
+
+    [Fact]
     public void ConnectionOptions_ConvertAPostgreSqlUriForNpgsql()
     {
         var normalized = DevStashDbContextOptions.NormalizeConnectionString(

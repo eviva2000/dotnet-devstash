@@ -11,6 +11,10 @@ public sealed class ApplicationUserConfiguration : IEntityTypeConfiguration<Appl
         builder.ToTable("application_users", DatabaseSchema.Name);
 
         builder.Property(user => user.Id).HasColumnName("id").ValueGeneratedNever();
+        builder.Property(user => user.DisplayName)
+            .HasColumnName("display_name")
+            .HasMaxLength(ApplicationUser.DisplayNameMaxLength)
+            .IsRequired();
         builder.Property(user => user.UserName).HasColumnName("user_name").HasMaxLength(256);
         builder.Property(user => user.NormalizedUserName).HasColumnName("normalized_user_name").HasMaxLength(256);
         builder.Property(user => user.Email).HasColumnName("email").HasMaxLength(256);
@@ -30,6 +34,7 @@ public sealed class ApplicationUserConfiguration : IEntityTypeConfiguration<Appl
             .IsUnique()
             .HasDatabaseName("ux_application_users_normalized_user_name");
         builder.HasIndex(user => user.NormalizedEmail)
-            .HasDatabaseName("ix_application_users_normalized_email");
+            .IsUnique()
+            .HasDatabaseName("ux_application_users_normalized_email");
     }
 }
