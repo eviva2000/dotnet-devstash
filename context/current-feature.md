@@ -33,3 +33,10 @@ Keep this updated from earliest to latest.
   - Added the required display name and unique normalized-email model changes, plus the schema-isolated `AddAuthenticationUserFields` migration and reproducible SQL script.
   - Confirmed `AddAuthenticationUserFields` is applied to the previously verified Neon development database; a targeted EF update reported the database already up to date.
   - Verified a warning-free build, 26 passing tests using isolated SQLite persistence, formatting, a clean diff check, and no pending EF model changes.
+
+- **React Authentication** (August 20, 2026)
+  - Replaced the frontend foundation screen with accessible registration and login forms, deterministic public/protected routing, session restoration, and a minimal authenticated application shell.
+  - Added a typed authentication client and in-memory auth provider that consume the existing ASP.NET Core cookie contract, normalize Problem Details, and acquire a fresh antiforgery token for registration, login, and logout.
+  - Configured the Vite `/api` development proxy and added responsive dark styling, visible focus states, client/server validation feedback, retryable initialization errors, and reduced-motion support.
+  - Added Vitest and Testing Library coverage for session restoration, route guards, CSRF request headers, registration, login failures, validation, retry behavior, and logout.
+  - Verified frontend lint, a production build, 12 passing frontend tests, a warning-free .NET build, 26 passing backend tests, a clean diff check, and live proxy responses from the existing `/me` and CSRF endpoints.
