@@ -1,13 +1,17 @@
-# DevStash — .NET + React
+# DevStash
 
-A learning-focused rebuild of DevStash with an ASP.NET Core backend and a React frontend.
+DevStash is a centralized developer knowledge hub for the code snippets, AI prompts, notes, terminal commands, files, images, links, and project context developers reuse every day.
+
+The goal is to provide one fast, searchable workspace for storing and organizing reusable technical knowledge instead of scattering it across editors, bookmarks, chat history, local folders, and documentation tools.
+
+This repository is a learning-focused rebuild of DevStash using a .NET 10 and ASP.NET Core backend, a React and TypeScript frontend, and PostgreSQL persistence through Entity Framework Core.
 
 ## Stack
 
 - .NET 10 and ASP.NET Core Minimal APIs
 - React, TypeScript, and Vite
 - xUnit for backend tests
-- PostgreSQL with Entity Framework Core in the next milestone
+- PostgreSQL with Entity Framework Core and ASP.NET Core Identity
 
 ## Structure
 
