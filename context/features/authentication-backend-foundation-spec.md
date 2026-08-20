@@ -139,9 +139,8 @@ Behavior:
 
 Responses:
 
-- `201 Created` with a safe user response.
-- `400 Bad Request` with validation problem details.
-- `409 Conflict` when the normalized email is already registered.
+- `202 Accepted` with an empty body for both a newly accepted registration and an already-registered normalized email, preventing account enumeration.
+- `400 Bad Request` with validation problem details for structurally invalid input.
 
 ### `POST /api/auth/login`
 
@@ -245,7 +244,7 @@ Add focused integration tests covering:
 
 - CSRF token issuance.
 - Registration success and password hashing.
-- Registration validation and duplicate normalized email.
+- Registration validation and an indistinguishable accepted response for new and duplicate normalized email.
 - Successful login and authentication-cookie issuance.
 - Generic failure for unknown email and wrong password.
 - Account lockout after the configured failed-attempt limit.
@@ -271,7 +270,7 @@ Run and report:
 - Authentication and authorization middleware are registered in the correct order.
 - Protected API endpoints return `401/403` rather than HTML redirects.
 - State-changing authentication endpoints enforce CSRF protection.
-- Duplicate registration and invalid login behavior follow the documented error contract.
+- New and duplicate registration attempts return the same accepted response, while invalid login behavior follows the documented error contract.
 - Failed-login lockout is configured and tested.
 - The user-model migration affects only `devstash_dotnet` on the Neon development branch.
 - Existing health, database-model, and database-registration tests continue to pass.

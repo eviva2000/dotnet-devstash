@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react'
+import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import { renderApp } from '../test/test-utils'
@@ -160,7 +160,7 @@ describe('authentication forms', () => {
     const fetch = fetchMock()
       .mockResolvedValueOnce(new Response(null, { status: 401 }))
       .mockResolvedValueOnce(jsonResponse({ requestToken: 'csrf-register' }))
-      .mockResolvedValueOnce(jsonResponse(ada, 201))
+      .mockResolvedValueOnce(new Response(null, { status: 202 }))
     const user = userEvent.setup()
 
     renderApp('/register')
@@ -171,7 +171,7 @@ describe('authentication forms', () => {
     await user.type(screen.getByLabelText('Confirm password'), 'example-password')
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
-    expect(await screen.findByText('Account created. Sign in with your new credentials.')).toBeVisible()
+    expect(await screen.findByText('Registration request received. You can now try signing in.')).toBeVisible()
     expect(screen.getByRole('heading', { name: 'Sign in to DevStash' })).toBeVisible()
     expect(fetch).toHaveBeenNthCalledWith(
       3,
@@ -188,19 +188,11 @@ describe('authentication forms', () => {
     )
   })
 
-  it('associates a duplicate-email error with the registration field', async () => {
+  it('handles an existing email with the same accepted registration flow', async () => {
     fetchMock()
       .mockResolvedValueOnce(new Response(null, { status: 401 }))
       .mockResolvedValueOnce(jsonResponse({ requestToken: 'csrf-register' }))
-      .mockResolvedValueOnce(
-        jsonResponse(
-          {
-            title: 'Email already registered',
-            code: 'email_already_registered',
-          },
-          409,
-        ),
-      )
+      .mockResolvedValueOnce(new Response(null, { status: 202 }))
     const user = userEvent.setup()
 
     renderApp('/register')
@@ -211,9 +203,8 @@ describe('authentication forms', () => {
     await user.type(screen.getByLabelText('Confirm password'), 'example-password')
     await user.click(screen.getByRole('button', { name: 'Create account' }))
 
-    const email = screen.getByLabelText('Email')
-    await waitFor(() => expect(email).toHaveAttribute('aria-invalid', 'true'))
-    expect(screen.getAllByText('An account is already registered with this email address.')).toHaveLength(2)
+    expect(await screen.findByText('Registration request received. You can now try signing in.')).toBeVisible()
+    expect(screen.getByRole('heading', { name: 'Sign in to DevStash' })).toBeVisible()
   })
 
   it('validates registration before making a write request', async () => {

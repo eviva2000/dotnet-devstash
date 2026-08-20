@@ -22,9 +22,8 @@ public static class AuthEndpoints
         group.MapPost("/register", Register)
             .AddEndpointFilter<AntiforgeryEndpointFilter>()
             .AllowAnonymous()
-            .Produces<AuthenticatedUserResponse>(StatusCodes.Status201Created)
+            .Produces(StatusCodes.Status202Accepted)
             .ProducesValidationProblem(StatusCodes.Status400BadRequest)
-            .ProducesProblem(StatusCodes.Status409Conflict)
             .WithName("RegisterUser");
 
         group.MapPost("/login", Login)
@@ -77,7 +76,7 @@ public static class AuthEndpoints
 
         if (await userManager.FindByEmailAsync(email) is not null)
         {
-            return DuplicateEmailProblem();
+            return Results.StatusCode(StatusCodes.Status202Accepted);
         }
 
         var user = new ApplicationUser
@@ -93,7 +92,7 @@ public static class AuthEndpoints
             if (result.Errors.Any(error =>
                     error.Code is "DuplicateEmail" or "DuplicateUserName"))
             {
-                return DuplicateEmailProblem();
+                return Results.StatusCode(StatusCodes.Status202Accepted);
             }
 
             return Results.ValidationProblem(
@@ -104,9 +103,7 @@ public static class AuthEndpoints
                 extensions: ProblemCode("registration_failed"));
         }
 
-        return Results.Json(
-            AuthenticatedUserResponse.FromUser(user),
-            statusCode: StatusCodes.Status201Created);
+        return Results.StatusCode(StatusCodes.Status202Accepted);
     }
 
     private static async Task<IResult> Login(
@@ -220,13 +217,6 @@ public static class AuthEndpoints
 
     private static IResult ValidationProblem(Dictionary<string, string[]> errors) =>
         Results.ValidationProblem(errors, extensions: ProblemCode("validation_failed"));
-
-    private static IResult DuplicateEmailProblem() =>
-        Results.Problem(
-            statusCode: StatusCodes.Status409Conflict,
-            title: "Email already registered",
-            detail: "An account is already registered with this email address.",
-            extensions: ProblemCode("email_already_registered"));
 
     private static IResult InvalidCredentialsProblem() =>
         Results.Problem(

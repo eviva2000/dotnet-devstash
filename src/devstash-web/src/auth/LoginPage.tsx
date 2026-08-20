@@ -83,7 +83,7 @@ export function LoginPage() {
     >
       {registrationComplete && (
         <div className="success-message" role="status">
-          Account created. Sign in with your new credentials.
+          Registration request received. You can now try signing in.
         </div>
       )}
       <form ref={formRef} className="auth-form" onSubmit={handleSubmit} noValidate>

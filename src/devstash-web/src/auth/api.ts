@@ -58,8 +58,6 @@ function apiError(response: Response, body: unknown): AuthApiError {
   let message = genericErrorMessage
   if (code === 'invalid_credentials') {
     message = 'The email or password is invalid.'
-  } else if (code === 'email_already_registered') {
-    message = 'An account is already registered with this email address.'
   } else if (code === 'invalid_csrf_token') {
     message = 'Your secure form session expired. Please try again.'
   } else if (Object.keys(fieldErrors).length > 0) {
@@ -125,7 +123,7 @@ async function authenticatedWrite<T>(
     throw new AuthApiError(genericErrorMessage, { code: 'network_error' })
   }
 
-  if (response.status === 204) {
+  if (response.status === 202 || response.status === 204) {
     return null
   }
 
@@ -167,7 +165,7 @@ export async function login(input: LoginInput): Promise<AuthenticatedUser> {
 }
 
 export async function register(input: RegisterInput): Promise<void> {
-  await authenticatedWrite<AuthenticatedUser>('/api/auth/register', input)
+  await authenticatedWrite('/api/auth/register', input)
 }
 
 export async function logout(): Promise<void> {

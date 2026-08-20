@@ -43,12 +43,9 @@ public sealed class AuthEndpointTests : IClassFixture<AuthWebApplicationFactory>
         var token = await GetCsrfToken(client);
 
         var response = await Register(client, token, "  Ada Lovelace  ", $"  {email}  ");
-        var userResponse = await response.Content.ReadFromJsonAsync<AuthenticatedUserResponse>();
 
-        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
-        Assert.NotNull(userResponse);
-        Assert.Equal("Ada Lovelace", userResponse.DisplayName);
-        Assert.Equal(email, userResponse.Email);
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        Assert.Empty(await response.Content.ReadAsStringAsync());
 
         using var scope = _factory.Services.CreateScope();
         var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -85,7 +82,7 @@ public sealed class AuthEndpointTests : IClassFixture<AuthWebApplicationFactory>
     }
 
     [Fact]
-    public async Task Register_WithSameNormalizedEmail_ReturnsConflict()
+    public async Task Register_WithSameNormalizedEmail_ReturnsIndistinguishableAcceptedResponse()
     {
         using var client = _factory.CreateHttpsClient();
         var email = UniqueEmail("duplicate");
@@ -93,11 +90,11 @@ public sealed class AuthEndpointTests : IClassFixture<AuthWebApplicationFactory>
         var first = await Register(client, token, "First User", email);
 
         var second = await Register(client, token, "Second User", email.ToUpperInvariant());
-        using var body = await ReadJson(second);
 
-        Assert.Equal(HttpStatusCode.Created, first.StatusCode);
-        Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
-        Assert.Equal("email_already_registered", body.RootElement.GetProperty("code").GetString());
+        Assert.Equal(HttpStatusCode.Accepted, first.StatusCode);
+        Assert.Equal(first.StatusCode, second.StatusCode);
+        Assert.Empty(await first.Content.ReadAsStringAsync());
+        Assert.Empty(await second.Content.ReadAsStringAsync());
     }
 
     [Fact]

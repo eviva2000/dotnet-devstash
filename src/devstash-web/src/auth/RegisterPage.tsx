@@ -65,11 +65,7 @@ export function RegisterPage() {
       setPassword('')
       setConfirmPassword('')
       if (error instanceof AuthApiError) {
-        const errorsFromApi = { ...error.fieldErrors }
-        if (error.code === 'email_already_registered') {
-          errorsFromApi.email = [error.message]
-        }
-        setFieldErrors(errorsFromApi)
+        setFieldErrors({ ...error.fieldErrors })
         setFormError(error.message)
       } else {
         setFormError('DevStash could not complete the request. Please try again.')

@@ -27,7 +27,7 @@ Reuse the existing:
 - `POST /api/auth/register`, `POST /api/auth/login`, and `POST /api/auth/logout` endpoints.
 - Protected `GET /api/auth/me` endpoint.
 - `AuthenticatedUserResponse` shape containing `id`, `displayName`, and `email`.
-- Stable problem codes including `validation_failed`, `email_already_registered`, and `invalid_credentials`.
+- Stable problem codes including `validation_failed` and `invalid_credentials`.
 - Secure `devstash.auth` cookie configured by the API.
 
 Do not recreate authentication in the frontend, read the HttpOnly cookie, or persist passwords, cookies, antiforgery tokens, or the authenticated-user response in `localStorage` or `sessionStorage`.
@@ -76,7 +76,7 @@ Use a deterministic entry route:
 
 - Show display name, email, password, and password-confirmation fields.
 - Link to `/login`.
-- Registration does not create a session. On success, navigate to `/login` and show a clear one-time success message.
+- Registration does not create a session. On an accepted response, navigate to `/login` and show a clear one-time message that the request was received without confirming whether the email was newly registered.
 - Do not automatically log in with the submitted password.
 - If the user is already authenticated, navigate to `/app`.
 
@@ -129,7 +129,7 @@ Do not add a CORS workaround or disable antiforgery validation. The Vite proxy i
 Normalize ASP.NET Core Problem Details and Validation Problem Details into a typed frontend error shape.
 
 - Map validation error keys to their matching fields when possible.
-- Map `email_already_registered` to the registration email field and offer navigation to login.
+- Treat the identical accepted response for new and duplicate email registration as a completed submission; do not reveal account existence.
 - Map `invalid_credentials` to a generic form-level login error.
 - Treat `401` from initial `/me` as anonymous and `401` from login as invalid credentials.
 - Treat an unexpected `401` from logout as an already-ended session, clear in-memory auth state, and return to login.
@@ -177,8 +177,8 @@ Cover at least:
 - An unresolved `/me` request does not flash protected content or redirect prematurely.
 - Login fetches a CSRF token, sends it in the required header, updates auth state, and navigates to `/app`.
 - Invalid credentials show the generic server error and do not authenticate.
-- Registration sends the expected trimmed fields and navigates to login with a success message without authenticating.
-- Duplicate email and field validation errors are rendered accessibly.
+- Registration sends the expected trimmed fields and navigates to login with a neutral received message without authenticating.
+- Duplicate email follows the same accepted UI path as a new email, while field validation errors are rendered accessibly.
 - Anonymous navigation to `/app` redirects to login.
 - Authenticated navigation to login or registration redirects to `/app`.
 - Logout obtains a CSRF token, ends the session, clears user state, and navigates to login.
@@ -195,7 +195,7 @@ Run and report:
 
 ## Acceptance Criteria
 
-- Anonymous users can register through the existing API and are directed to login after success.
+- Anonymous users can submit registration through the existing API and are directed to login after the request is accepted.
 - Registered users can log in and reach `/app` through the secure cookie session.
 - Refreshing `/app` restores the session through `/api/auth/me` without reading or persisting the auth cookie in JavaScript.
 - Anonymous users cannot see protected shell content, including during session initialization.
